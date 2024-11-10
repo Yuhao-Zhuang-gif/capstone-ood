@@ -27,7 +27,7 @@ import trainers.coop
 import trainers.cocoop
 import trainers.zsclip
 
-
+# Prints out the command-line arguments and configuration settings
 def print_args(args, cfg):
     print("***************")
     print("** Arguments **")
@@ -41,7 +41,7 @@ def print_args(args, cfg):
     print("************")
     print(cfg)
 
-
+# Resets the configuration (cfg) based on command-line arguments
 def reset_cfg(cfg, args):
     if args.root:
         cfg.DATASET.ROOT = args.root
@@ -73,7 +73,8 @@ def reset_cfg(cfg, args):
     if args.head:
         cfg.MODEL.HEAD.NAME = args.head
 
-
+# Extends the default configuration by adding new settings for specific training strategies (COOP and COCOOP). 
+# This allows for custom parameters such as the number of context vectors and context initialization.
 def extend_cfg(cfg):
     """
     Add new config variables.
@@ -101,7 +102,8 @@ def extend_cfg(cfg):
 
     cfg.DATASET.SUBSAMPLE_CLASSES = "all"  # all, base or new
 
-
+# Combines multiple sources of configuration (dataset and method config files, command-line arguments) 
+# and freezes the final configuration to prevent further changes. It creates the final configuration used for training.
 def setup_cfg(args):
     cfg = get_cfg_default()
     extend_cfg(cfg)
@@ -126,32 +128,34 @@ def setup_cfg(args):
 
 
 def main(args):
-    cfg = setup_cfg(args)
+    cfg = setup_cfg(args) # prepare the configuration
     if cfg.SEED >= 0:
-        print("Setting fixed seed: {}".format(cfg.SEED))
+        print("Setting fixed seed: {}".format(cfg.SEED)) # fixed seed for reproducibility
         set_random_seed(cfg.SEED)
-    setup_logger(cfg.OUTPUT_DIR)
+    setup_logger(cfg.OUTPUT_DIR) # initializes the logger to log output to the specified directory
 
     if torch.cuda.is_available() and cfg.USE_CUDA:
         torch.backends.cudnn.benchmark = True
 
     print_args(args, cfg)
     print("Collecting env info ...")
-    print("** System info **\n{}\n".format(collect_env_info()))
+    print("** System info **\n{}\n".format(collect_env_info())) # Logs both arguments and configuration settings.
 
-    trainer = build_trainer(cfg)
+    trainer = build_trainer(cfg) # Builds the trainer coop/cocoop
 
+    # Eval mode
     if args.eval_only:
         trainer.load_model(args.model_dir, epoch=args.load_epoch)
         trainer.test()
         return
 
+    # train mode
     if not args.no_train:
         trainer.train()
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser() # pass arguments from command lines
     parser.add_argument("--root", type=str, default="", help="path to dataset")
     parser.add_argument("--output-dir", type=str, default="", help="output directory")
     parser.add_argument(
@@ -159,12 +163,12 @@ if __name__ == "__main__":
         type=str,
         default="",
         help="checkpoint directory (from which the training resumes)",
-    )
+    ) # resume from a checkpoint
     parser.add_argument(
         "--seed", type=int, default=-1, help="only positive value enables a fixed seed"
     )
     parser.add_argument(
-        "--source-domains", type=str, nargs="+", help="source domains for DA/DG"
+        "--source-domains", type=str, nargs="+", help="source domains for DA/DG" # in dassl.config.default.py
     )
     parser.add_argument(
         "--target-domains", type=str, nargs="+", help="target domains for DA/DG"
