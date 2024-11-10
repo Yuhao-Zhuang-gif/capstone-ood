@@ -16,10 +16,11 @@ from clip.simple_tokenizer import SimpleTokenizer as _Tokenizer
 _tokenizer = _Tokenizer()
 
 
+# build clip model
 def load_clip_to_cpu(cfg):
-    backbone_name = cfg.MODEL.BACKBONE.NAME
-    url = clip._MODELS[backbone_name]
-    model_path = clip._download(url)
+    backbone_name = cfg.MODEL.BACKBONE.NAME # CNN backbone, usually ResNet-50
+    url = clip._MODELS[backbone_name] # CoOp/clip/clip.py
+    model_path = clip._download(url) # CoOp/clip/clip.py
 
     try:
         # loading JIT archive
@@ -29,7 +30,7 @@ def load_clip_to_cpu(cfg):
     except RuntimeError:
         state_dict = torch.load(model_path, map_location="cpu")
 
-    model = clip.build_model(state_dict or model.state_dict())
+    model = clip.build_model(state_dict or model.state_dict()) # CoOp/clip/model.py
 
     return model
 
