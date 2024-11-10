@@ -12,6 +12,8 @@ All you need is `CoOp/scripts/coop/main.sh`, which contains six input arguments.
 
 `CFG` means which config file to use, such as `rn50`, `rn101` or `vit_b32` (see `CoOp/configs/trainers/CoOp/`). Note that for ImageNet, we use `CoOp/configs/trainers/CoOp/*_ep50.yaml` for all settings (please follow the implementation details shown in the paper).
 
+'TRAINER' for CoOp is 'CoOp/trainers/coop.py'. This is essential for training
+
 Below we provide examples on how to run CoOp on Caltech101.
 
 **CLIP + CoOp (M=16, end)**:
