@@ -73,7 +73,7 @@ class DataManager:
             print("* Using custom transform for testing")
             tfm_test = custom_tfm_test
 
-        # Build train_loader_x
+        # Build train_loader_x, used in dassl/engine/trainer.py SimpleTrainer build_data_loader()
         train_loader_x = build_data_loader(
             cfg,
             sampler_type=cfg.DATALOADER.TRAIN_X.SAMPLER,
