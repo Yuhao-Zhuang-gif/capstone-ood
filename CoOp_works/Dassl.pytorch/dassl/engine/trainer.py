@@ -344,7 +344,7 @@ class SimpleTrainer(TrainerBase):
         A re-implementation of this method must create the
         same attributes (self.dm is optional).
         """
-        dm = DataManager(self.cfg)
+        dm = DataManager(self.cfg) # from dassl.data import DataManager
 
         self.train_loader_x = dm.train_loader_x
         self.train_loader_u = dm.train_loader_u  # optional, can be None
