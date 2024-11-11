@@ -227,7 +227,7 @@ class CoOp(TrainerX):
         print(f"Loading CLIP (backbone: {cfg.MODEL.BACKBONE.NAME})")
         clip_model = load_clip_to_cpu(cfg)
         
-        if cfg.TRAINER.COOP.PREC == "fp32" or cfg.TRAINER.COOP.PREC == "amp":
+        if cfg.TRAINER.COOP.PREC == "fp32" or cfg.TRAINER.COOP.PREC == "amp": # in CoOp/train.py extend_cfg()
             # CLIP's default precision is fp16
             clip_model.float()
 
