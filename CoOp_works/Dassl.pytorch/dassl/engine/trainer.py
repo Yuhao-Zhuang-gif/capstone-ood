@@ -323,7 +323,7 @@ class SimpleTrainer(TrainerBase):
         self.cfg = cfg
         self.build_data_loader()
         self.build_model()
-        self.evaluator = build_evaluator(cfg, lab2cname=self.lab2cname)
+        self.evaluator = build_evaluator(cfg, lab2cname=self.lab2cname) # from dassl/evalution/build.py
         self.best_result = -np.inf
 
     def check_cfg(self, cfg):
