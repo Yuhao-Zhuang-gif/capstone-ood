@@ -209,7 +209,7 @@ class CustomCLIP(nn.Module):
         return logits
 
 
-@TRAINER_REGISTRY.register()
+@TRAINER_REGISTRY.register() # decorator, register object CoOp in dassl's Registry class
 class CoOp(TrainerX):
     """Context Optimization (CoOp).
 
