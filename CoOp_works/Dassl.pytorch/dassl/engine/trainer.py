@@ -584,7 +584,7 @@ class TrainerX(SimpleTrainer):
     """A base trainer using labeled data only."""
 
     def run_epoch(self):
-        self.set_model_mode("train")
+        self.set_model_mode("train") # from TrainerBase
         losses = MetricMeter()
         batch_time = AverageMeter()
         data_time = AverageMeter()
