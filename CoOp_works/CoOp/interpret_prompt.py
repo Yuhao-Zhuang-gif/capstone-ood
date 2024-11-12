@@ -6,7 +6,7 @@ import torch
 from clip.simple_tokenizer import SimpleTokenizer
 from clip import clip
 
-
+# Running this file will store positive prompts
 def load_clip_to_cpu(backbone_name="RN50"):
     url = clip._MODELS[backbone_name]
     model_path = clip._download(url)
