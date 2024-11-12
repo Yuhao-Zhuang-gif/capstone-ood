@@ -211,7 +211,7 @@ class TrainerBase:
             else:
                 raise KeyError
 
-    def update_lr(self, names=None):
+    def update_lr(self, names=None): # used in CoOp/trainers/coop.py forward_backward()
         names = self.get_model_names(names)
 
         for name in names:
@@ -297,7 +297,7 @@ class TrainerBase:
             if self._optims[name] is not None:
                 self._optims[name].step()
 
-    def model_backward_and_update(self, loss, names=None):
+    def model_backward_and_update(self, loss, names=None): # used in CoOp/trainers/coop.py forward_backward()
         self.model_zero_grad(names)
         self.model_backward(loss)
         self.model_update(names)
@@ -594,9 +594,9 @@ class TrainerX(SimpleTrainer):
         
         for self.batch_idx, batch in enumerate(self.train_loader_x):
             data_time.update(time.time() - end)
-            loss_summary = self.forward_backward(batch)
+            loss_summary = self.forward_backward(batch) # essential! loss and update. method in coop/trainers 
             batch_time.update(time.time() - end)
-            losses.update(loss_summary)
+            losses.update(loss_summary) # essential！ update loss. method in dassl/utils/meters.py MetricMeter
 
             meet_freq = (self.batch_idx + 1) % self.cfg.TRAIN.PRINT_FREQ == 0
             only_few_batches = self.num_batches < self.cfg.TRAIN.PRINT_FREQ
