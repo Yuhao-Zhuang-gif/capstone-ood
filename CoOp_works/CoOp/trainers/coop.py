@@ -16,7 +16,7 @@ from clip.simple_tokenizer import SimpleTokenizer as _Tokenizer
 _tokenizer = _Tokenizer()
 
 
-# build clip model
+# load clip model
 def load_clip_to_cpu(cfg):
     backbone_name = cfg.MODEL.BACKBONE.NAME # CNN backbone, usually ResNet-50
     url = clip._MODELS[backbone_name] # CoOp/clip/clip.py
@@ -209,6 +209,7 @@ class CustomCLIP(nn.Module):
         return logits
 
 
+# Trainer
 @TRAINER_REGISTRY.register() # decorator, register object CoOp in dassl's Registry class
 class CoOp(TrainerX):
     """Context Optimization (CoOp).
@@ -225,13 +226,13 @@ class CoOp(TrainerX):
         classnames = self.dm.dataset.classnames
 
         print(f"Loading CLIP (backbone: {cfg.MODEL.BACKBONE.NAME})")
-        clip_model = load_clip_to_cpu(cfg)
+        clip_model = load_clip_to_cpu(cfg) # load clip model
         
         if cfg.TRAINER.COOP.PREC == "fp32" or cfg.TRAINER.COOP.PREC == "amp": # in CoOp/train.py extend_cfg()
             # CLIP's default precision is fp16
             clip_model.float()
 
-        print("Building custom CLIP")
+        print("Building custom CLIP") # using CustomClip Class to build custom CLIP
         self.model = CustomCLIP(cfg, classnames, clip_model)
 
         print("Turning off gradients in both the image and the text encoder")
@@ -240,9 +241,9 @@ class CoOp(TrainerX):
                 param.requires_grad_(False)
 
         if cfg.MODEL.INIT_WEIGHTS:
-            load_pretrained_weights(self.model.prompt_learner, cfg.MODEL.INIT_WEIGHTS)
+            load_pretrained_weights(self.model.prompt_learner, cfg.MODEL.INIT_WEIGHTS) # from dassl/utils/torchtools.py
 
-        self.model.to(self.device)
+        self.model.to(self.device) # nn.Module method, superclass of CustomCLIP, move and/or cast the parameters and buffers.
         # NOTE: only give prompt_learner to the optimizer
         self.optim = build_optimizer(self.model.prompt_learner, cfg.OPTIM)
         self.sched = build_lr_scheduler(self.optim, cfg.OPTIM)
@@ -270,17 +271,18 @@ class CoOp(TrainerX):
             self.scaler.step(self.optim)
             self.scaler.update()
         else:
-            output = self.model(image)
+            output = self.model(image) # triggers forward() method in CustomClip, takes an image tensor as input
             loss = F.cross_entropy(output, label)
-            self.model_backward_and_update(loss)
+            self.model_backward_and_update(loss) # in TrainerBase
 
         loss_summary = {
             "loss": loss.item(),
             "acc": compute_accuracy(output, label)[0].item(),
         }
 
+        # update learning rate
         if (self.batch_idx + 1) == self.num_batches:
-            self.update_lr()
+            self.update_lr() # dassl/engine/trainer.py
 
         return loss_summary
 
