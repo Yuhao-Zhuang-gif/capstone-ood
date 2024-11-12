@@ -6,7 +6,7 @@ import torch
 from clip.simple_tokenizer import SimpleTokenizer
 from clip import clip
 
-# Running this file will store positive prompts
+# Running this file will return top k prompts for each token
 def load_clip_to_cpu(backbone_name="RN50"):
     url = clip._MODELS[backbone_name]
     model_path = clip._download(url)
@@ -26,7 +26,7 @@ def load_clip_to_cpu(backbone_name="RN50"):
 
 parser = argparse.ArgumentParser()
 parser.add_argument("fpath", type=str, help="Path to the learned prompt")
-parser.add_argument("topk", type=int, help="Select top-k similar words")
+parser.add_argument("topk", type=int, help="Select top-k similar words") # top k nearst words for each token
 args = parser.parse_args()
 
 fpath = args.fpath
