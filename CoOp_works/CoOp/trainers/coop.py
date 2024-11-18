@@ -16,7 +16,7 @@ from clip.simple_tokenizer import SimpleTokenizer as _Tokenizer
 _tokenizer = _Tokenizer()
 
 
-# load clip model
+# load clip model, used in build_model() CoOp
 def load_clip_to_cpu(cfg):
     backbone_name = cfg.MODEL.BACKBONE.NAME # CNN backbone, usually ResNet-50
     url = clip._MODELS[backbone_name] # in CoOp/clip/clip.py, "https://openaipublic.azureedge.net/clip/models/afeb0e10f9e5a86da6080e35cf09123aca3b358a0c3e3b6c78a7b63bc04b6762/RN50.pt"
